@@ -6,11 +6,20 @@
                  Includes a DHT22 (temp and humidity), capacitive soil moisture 
                  sensor and light sensor.
    
-    Connections:
-    
+    Connections: WeMos D1 mini
+        D1 (SCL) - OLED D0 & BH1750 SCL
+        D2 (SDA) - OLED D1 & BH1750 SDA
+        A0 - moisture sensor A
 
-    Note:
-   
+    Power for sensors:
+        BH1750 - 3.3V
+        OLED - 3.3V
+        Moisture - 3.3V
+        DHT22 - 3.3V
+
+    Notes:
+    OLED: Need to remove R3 resistor for oled and short R1, R4, R5, R6
+    In SSD1306.h:  #define SSD1306_128_64
 *******************************************************/
 
 #include <SPI.h>
@@ -22,10 +31,9 @@
 #include <Button.h>
 
 int BH1750address = 0x23; //setting i2c address
-
 byte buff[2];
 
-int moistureSensor = 0;
+#define moistureSensorPin A0
 
 #define DHTPIN D5  // what digital pin we're connected to
 #define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
@@ -59,22 +67,20 @@ void setup()   {
 void loop() {
 
   float temp = dht.readTemperature();
-
   float h = dht.readHumidity();
 
-  int sensorValue = analogRead(moistureSensor);
-  sensorValue = map(sensorValue, 375, 740, 100, 0);
+  int moistValue = analogRead(moistureSensorPin);
+  moistValue = map(moistValue, 375, 740, 100, 0);
   // print out the value you read:
   // float voltage = sensorValue * (1024 / 100);
 
-  int i;
-  uint16_t val = 0;
+  uint16_t lightVal = 0;
   BH1750_Init(BH1750address);
   delay(200);
 
   if (2 == BH1750_Read(BH1750address))
   {
-    val = ((buff[0] << 8) | buff[1]) / 1.2;
+    lightVal = ((buff[0] << 8) | buff[1]) / 1.2;
   }
   delay(150);
 
@@ -96,14 +102,14 @@ void loop() {
     display.println("");
 
     display.print("Moist: ");
-    display.print(sensorValue);
+    display.print(moistValue);
     display.println("%");
     display.println("");
 
     display.setTextSize(1);
     display.print("Light");
     display.print(" ");
-    display.print(val, DEC);
+    display.print(lightVal, DEC);
     display.println("[lx]");
 
     display.display();

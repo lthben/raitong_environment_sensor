@@ -1,11 +1,11 @@
 /*******************************************************
-    Author: Lim Ren Yi
+    Author: Lim Ren Yi & Benjamin Low
     Date: Jul 2018
     Title: Raitong Environment Sensor
     Description: Environment Sensor for Black Soldier Fly and Earthworm monitoring
-                 Includes a DHT22 (temp and humidity), capacitive soil moisture 
+                 Includes a DHT22 (temp and humidity), capacitive soil moisture
                  sensor and light sensor.
-   
+
     Connections: WeMos D1 mini
         D1 (SCL) - OLED D0 & BH1750 SCL
         D2 (SDA) - OLED D1 & BH1750 SDA
@@ -32,15 +32,18 @@
 #include <Math.h>
 #include <Button.h>
 
+//user settings
+const int DISPLAYDURATION = 4000;//how long in ms to display sensor data on OLED screen
+
+//sensors
 int BH1750address = 0x23; //setting i2c address
 byte buff[2];
-
 #define moistureSensorPin A0
-
 #define DHTPIN D5  // what digital pin we're connected to
 #define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
 DHT dht(DHTPIN, DHTTYPE);
 
+//OLED screen
 #define OLED_RESET 0 //not connected actually
 Adafruit_SSD1306 display(OLED_RESET);
 
@@ -48,7 +51,7 @@ Adafruit_SSD1306 display(OLED_RESET);
 #error("Height incorrect, please fix Adafruit_SSD1306.h!");
 #endif
 
-Button myButton = Button(D4, PULLUP); 
+Button myButton = Button(D4, PULLUP);
 
 void setup()   {
   Wire.begin();
@@ -56,7 +59,7 @@ void setup()   {
   dht.begin();
   delay(1000); // delay 1 sec
 
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
   display.setTextSize(1);
   display.setCursor(32, 32);
@@ -81,15 +84,15 @@ void loop() {
   uint16_t lightVal = 0;
   BH1750_Init(BH1750address);
   delay(200);
-  
-  if (2 == BH1750_Read(BH1750address))
-  {
-    lightVal = ((buff[0] << 8) | buff[1]) / 1.2;
-  }
+
+  if (2 == BH1750_Read(BH1750address)) lightVal = ((buff[0] << 8) | buff[1]) / 1.2;
   delay(150);
 
   if (myButton.uniquePress()) {
-  //display all the sensor values
+
+    display.clearDisplay();
+
+    //display all the sensor values
     Serial.println("Button pressed");
 
     display.setTextSize(1);
@@ -137,10 +140,9 @@ void loop() {
     Serial.println("[lx]");
 
     display.display();
-    delay(2000);
-    display.clearDisplay();
   }
 
+  delay(DISPLAYDURATION);
 }
 
 int BH1750_Read(int address) //

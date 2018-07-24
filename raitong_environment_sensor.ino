@@ -9,6 +9,7 @@
     Connections: WeMos D1 mini
         D1 (SCL) - OLED D0 & BH1750 SCL
         D2 (SDA) - OLED D1 & BH1750 SDA
+        D3 - OLED RESET
         A0 - moisture sensor A
         D5 - DHT22
         D4 - button
@@ -44,7 +45,7 @@ byte buff[2];
 DHT dht(DHTPIN, DHTTYPE);
 
 //OLED screen
-#define OLED_RESET 0 //not connected actually
+#define OLED_RESET D3 
 Adafruit_SSD1306 display(OLED_RESET);
 
 #if (SSD1306_LCDHEIGHT != 64)

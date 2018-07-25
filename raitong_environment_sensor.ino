@@ -34,7 +34,7 @@
 #include <Button.h>
 
 //user settings
-const int DISPLAYDURATION = 4000;//how long in ms to display sensor data on OLED screen
+const int DISPLAYDURATION = 2000;//how long in ms to display sensor data on OLED screen
 
 //sensors
 int BH1750address = 0x23; //setting i2c address
@@ -45,7 +45,7 @@ byte buff[2];
 DHT dht(DHTPIN, DHTTYPE);
 
 //OLED screen
-#define OLED_RESET D3 
+#define OLED_RESET D3
 Adafruit_SSD1306 display(OLED_RESET);
 
 #if (SSD1306_LCDHEIGHT != 64)
@@ -62,15 +62,20 @@ void setup()   {
 
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
+  display.setTextColor(WHITE); //need to set this
+  display.setTextSize(2);
+  display.setCursor(0, 0);
+  display.println("Raitong");
   display.setTextSize(1);
-  display.setCursor(32, 32);
-  display.println("Raitong\nEnvironment\nSensor");
+  display.println("Environment\nSensor");
   display.display();
 
   Serial.println("Raitong Environment Sensor");
+  
   delay(2000);
+  display.clearDisplay();
+  display.display();
 }
-
 
 void loop() {
 
@@ -91,59 +96,61 @@ void loop() {
 
   if (myButton.uniquePress()) {
 
-    display.clearDisplay();
-
     //display all the sensor values
-    Serial.println("Button pressed");
-
     display.setTextSize(1);
+    display.setTextColor(WHITE);
     display.setCursor(0, 0);
     display.print("Temp: ");
     display.print(temp);
     display.println("C");
     display.println("");
 
-    Serial.print("Temp: ");
-    Serial.print(temp);
-    Serial.println("C");
-    Serial.println("");
-
-    display.setTextSize(1);
     display.print("Humidity: ");
     display.print(h);
     display.println("%");
     display.println("");
-
-    Serial.print("Humidity: ");
-    Serial.print(h);
-    Serial.println("%");
-    Serial.println("");
 
     display.print("Moist: ");
     display.print(moistValue);
     display.println("%");
     display.println("");
 
+    display.print("Light");
+    display.print(" ");
+    display.print(lightVal, DEC);
+    display.println(" lux");
+
+    display.display();
+
+    Serial.println();
+    Serial.print(millis());
+    Serial.println(": Button pressed");
+    Serial.println();
+
+    Serial.print("Temp: ");
+    Serial.print(temp);
+    Serial.println(" degC");
+    Serial.println("");
+
+    Serial.print("Humidity: ");
+    Serial.print(h);
+    Serial.println("%");
+    Serial.println("");
+
     Serial.print("Moist: ");
     Serial.print(moistValue);
     Serial.println("%");
     Serial.println("");
 
-    display.setTextSize(1);
-    display.print("Light");
-    display.print(" ");
-    display.print(lightVal, DEC);
-    display.println("[lx]");
-
     Serial.print("Light");
     Serial.print(" ");
     Serial.print(lightVal, DEC);
-    Serial.println("[lx]");
-
-    display.display();
+    Serial.println(" lux");
   }
 
   delay(DISPLAYDURATION);
+  display.clearDisplay();
+  display.display();
 }
 
 int BH1750_Read(int address) //

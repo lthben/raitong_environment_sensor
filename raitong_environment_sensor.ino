@@ -7,12 +7,12 @@
                  sensor and light sensor.
 
     Connections: WeMos D1 mini
+        A0 - moisture sensor A
         D1 (SCL) - OLED D0 & BH1750 SCL
         D2 (SDA) - OLED D1 & BH1750 SDA
-        D3 - OLED RESET
-        A0 - moisture sensor A
-        D5 - DHT22
-        D4 - button
+        D3 - OLED RESET 
+        D4 - button with inbuilt pullup resistor
+        D5 - DHT22 (only works with D5)
 
     Power for components:
         BH1750 - 5V
@@ -102,7 +102,7 @@ void loop() {
     display.setCursor(0, 0);
     display.print("Temp: ");
     display.print(temp);
-    display.println("C");
+    display.println(" deg C");
     display.println("");
 
     display.print("Humidity: ");
@@ -121,7 +121,7 @@ void loop() {
     display.println(" lux");
 
     display.display();
-
+/*
     Serial.println();
     Serial.print(millis());
     Serial.println(": Button pressed");
@@ -146,6 +146,7 @@ void loop() {
     Serial.print(" ");
     Serial.print(lightVal, DEC);
     Serial.println(" lux");
+    */
   }
 
   delay(DISPLAYDURATION);
